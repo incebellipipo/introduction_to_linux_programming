@@ -16,18 +16,18 @@
     </head>
 
     <body>
-        <div class="theme-switch-wrap">
+        {% include toc.html %}
+
+        <div class="preamble">
             <span class="tex">\documentclass[<button type="button" class="theme-switch" role="switch" aria-checked="false" aria-label="Dark theme" title="Switch theme"><span class="opt-light">light</span><span class="opt-dark">dark</span></button>]{webpage}</span>
+            <!-- Filled from the address bar: the root of the domain this site is served from -->
+            <span class="tex">\url[<a href="/" class="mainpage">mainpage</a>]{<span class="mainpage-host">/</span>}</span>
         </div>
 
         <header class="latex-title">
-            <p class="title">{{ site.title }}</p>
+            <p class="title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></p>
             <p class="author">{{ site.author }}</p>
             <p class="date">{{ site.time | date: '%B %Y' }}</p>
-            <nav class="links scroll">
-                {% if site.home_url %}<a href="{{ site.home_url }}">Home</a>{% endif %}
-                <a href="{{ '/' | relative_url }}"{% if page.url == "/" %} class="active"{% endif %}>Contents</a>
-            </nav>
         </header>
 
         <main>
@@ -49,6 +49,13 @@
         </footer>
 
         <script>
+            if (location.host) { // not opened as a file
+                document.querySelectorAll(".mainpage").forEach(function (a) { a.href = location.origin + "/"; });
+                document.querySelectorAll(".mainpage-host").forEach(function (el) { el.textContent = location.host; });
+            }
+        </script>
+
+        <script>
             (function () {
                 var root = document.documentElement;
                 var button = document.querySelector(".theme-switch");
@@ -68,6 +75,8 @@
                 });
             })();
         </script>
+
+        <script src="{{ '/assets/js/toc.js' | relative_url }}"></script>
 
         {% include mermaid.html %}
     </body>

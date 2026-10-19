@@ -1,0 +1,104 @@
+@use "variables" as *;
+
+/* The sidebar (_includes/toc.html, assets/js/toc.js). Fixed on the left on
+   wide screens, with the page moved over to make room; a drawer below that. */
+$toc-width: 260px;
+$toc-wide: 1200px; // the narrowest window with room for the sidebar and the page
+
+.toc {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  width: $toc-width;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: calc(1.5em + env(safe-area-inset-top, 0px)) 1.25em 2em;
+  border-right: 1px solid var(--code-rule);
+  background: $body-bg;
+  font-size: 0.8 * $base-font-size;
+  line-height: 1.35;
+  text-align: left;
+  hyphens: manual;
+
+  .toc-title {
+    margin: 1.2em 0 0.5em;
+    font-weight: 700;
+    &:first-child { margin-top: 0; }
+  }
+
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li { margin: 0.3em 0; }
+  li ol {
+    margin: 0.3em 0 0.5em;
+    padding-left: 0.9em;
+    border-left: 1px solid var(--code-rule);
+    font-size: 0.92em;
+  }
+
+  a {
+    display: block;
+    color: inherit;
+    &:hover { color: $link-hover-color; text-decoration: none; }
+  }
+  li.current > a { font-weight: 700; color: $link-color; }
+  a.active { color: $link-color; }
+}
+
+.toc-toggle {
+  display: none;
+  position: fixed;
+  left: 0.75em;
+  bottom: calc(0.75em + env(safe-area-inset-bottom, 0px));
+  z-index: 21;
+  padding: 0.35em 0.7em;
+  border: 1px solid var(--code-rule);
+  border-radius: 3px;
+  background: $body-bg;
+  color: $link-color;
+  font-family: $mono-font-family;
+  font-size: 0.6em;
+  cursor: pointer;
+  &:hover { color: $link-hover-color; }
+}
+
+.toc-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+@media screen and (min-width: $toc-wide) {
+  body {
+    // centred while there is room, otherwise just clear of the sidebar
+    margin-left: max(#{$toc-width + 30px}, calc((100vw - #{$content-width} - 2.5em) / 2));
+  }
+  .preamble { left: $toc-width + 20px; }
+  .toc-backdrop { display: none; }
+}
+
+@media screen and (max-width: $toc-wide - 1px) {
+  .toc {
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.2s, visibility 0s 0.2s;
+    box-shadow: 0 0 1.5em rgba(0, 0, 0, 0.2);
+    &.open {
+      transform: none;
+      visibility: visible;
+      transition: transform 0.2s;
+    }
+  }
+  .toc-toggle { display: block; }
+}
+
+@media print {
+  .toc, .toc-toggle, .toc-backdrop { display: none; }
+}

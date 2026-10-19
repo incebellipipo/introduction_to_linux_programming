@@ -1,0 +1,32 @@
+<!-- Sidebar: the front page, then every chapter (NN-chapter/readme.md) in folder
+     order, numbered from the folder as in the headings (00-introduction is "0."),
+     with the chapter's other pages under it. The number is added here because
+     jekyll-titles-from-headings reads "# 0. Introduction" as a list and drops it.
+     assets/js/toc.js adds the current page's sections and the drawer on small screens. -->
+{% assign doc_pages = site.pages | where: "layout", "doc" | sort: "path" %}
+<nav class="toc" id="toc" aria-label="Contents">
+    <p class="toc-title">Contents</p>
+    <ol>
+        {% for p in doc_pages %}{% if p.url == "/" %}
+        <li{% if page.url == p.url %} class="current"{% endif %}><a href="{{ p.url | relative_url }}">{{ p.title }}</a></li>
+        {% endif %}{% endfor %}
+        {% for p in doc_pages %}{% if p.name == "readme.md" %}
+        {% assign chapter = p.path | split: "/" | first %}
+        {% assign chapter_dir = chapter | append: "/" %}
+        {% assign chapter_pages = doc_pages | where_exp: "q", "q.path contains chapter_dir" | where_exp: "q", "q.name != 'readme.md'" %}
+        {% assign lead = chapter | split: "-" | first %}
+        {% assign digits = lead | remove: "0" | remove: "1" | remove: "2" | remove: "3" | remove: "4" | remove: "5" | remove: "6" | remove: "7" | remove: "8" | remove: "9" %}
+        <li{% if page.url == p.url %} class="current"{% endif %}><a href="{{ p.url | relative_url }}">{% if digits == "" and chapter contains "-" %}{{ lead | plus: 0 }}. {% endif %}{{ p.title }}</a>
+            {% if chapter_pages.size > 0 %}
+            <ol>
+                {% for q in chapter_pages %}
+                <li{% if page.url == q.url %} class="current"{% endif %}><a href="{{ q.url | relative_url }}">{{ q.title }}</a></li>
+                {% endfor %}
+            </ol>
+            {% endif %}
+        </li>
+        {% endif %}{% endfor %}
+    </ol>
+</nav>
+<button type="button" class="toc-toggle" aria-controls="toc" aria-expanded="false">\tableofcontents</button>
+<div class="toc-backdrop" hidden></div>

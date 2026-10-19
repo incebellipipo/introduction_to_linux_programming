@@ -6,9 +6,6 @@ author: Emir Cem Gezer
 # workflow passes the right value, so this only matters for local previews.
 baseurl: /introduction-to-linux-programming
 
-# Optional: a "Home" link in the menu, e.g. to your own website
-home_url:
-
 markdown: kramdown
 highlighter: rouge
 kramdown:
